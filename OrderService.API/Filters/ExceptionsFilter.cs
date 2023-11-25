@@ -24,6 +24,11 @@ namespace OrderService.API.Filters
                 var response = new ResponseDto { Status = StatusCodes.Status500InternalServerError, Message = ex.Message };
                 context.Result = new ObjectResult(response) { StatusCode = response.Status };
             }
+            else if (ex is CustomArgumentException)
+            {
+                var response = new ResponseDto { Status = StatusCodes.Status400BadRequest, Message = ex.Message };
+                context.Result = new ObjectResult(response) { StatusCode = response.Status };
+            }
             else
             {
                 _backgroundDataHandler.HandleLog(ex);

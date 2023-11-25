@@ -14,7 +14,7 @@ namespace OrderService.BLL.Infrastructure
         /// <exception cref="CustomInvalidOperationException"></exception>
         public static void HandleException(this Exception exception, string newExceptionMessage, Action action)
         {
-            if (exception is CustomInvalidOperationException)
+            if (exception is CustomInvalidOperationException || exception is CustomArgumentException)
                 throw exception;
 
             action();

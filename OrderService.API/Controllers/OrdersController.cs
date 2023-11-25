@@ -33,7 +33,16 @@ namespace OrderService.API.Controllers
             var orderItems = mapper.Map<IEnumerable<OrderItemCreationModel>, IEnumerable<OrderItem>>(orderCreationDto.OrderItems);
 
             await _ordersService.CreateAsync(order, orderItems);
-            return Ok(new ResponseDto { Message = "Заказ успешно сохранен" });
+            
+            var responseDto = new ResponseDto { Status = StatusCodes.Status201Created, Message = "Заказ успешно сохранен" };
+            return StatusCode(StatusCodes.Status201Created, responseDto);
+        }
+
+        [HttpDelete("orders/order/{id}")]
+        public async Task<IActionResult> DeleteOrderAsync(int id)
+        {
+            await _ordersService.DeleteAsync(id);
+            return Ok(new ResponseDto { Message = "Заказ успешно удален" });
         }
     }
 }
