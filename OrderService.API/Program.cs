@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(opt => opt.Filters.Add<ExceptionsFilter>());
 builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseNpgsql(builder.Configuration["PostgresConnectionString"]));
+builder.Services.AddSwaggerGen();
 
 // BLL
 builder.Services.AddTransient<IOrdersService, OrdersService>();
@@ -27,6 +28,13 @@ builder.Services.AddScoped<IRepository<Order>, PostgresEfCommonRepository<Order>
 builder.Services.AddScoped<IOrderItemsRepository, PostgresEfOrderItemsRepository>();
 
 var app = builder.Build();
+
+// TODO: hide swagger
+//if (app.Environment.IsDevelopment())
+//{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+//}
 
 app.UseExceptionHandler(c => c.Run(async context => 
 {
