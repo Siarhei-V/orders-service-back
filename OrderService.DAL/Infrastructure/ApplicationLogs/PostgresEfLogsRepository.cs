@@ -11,7 +11,7 @@ namespace OrderService.DAL.Infrastructure.ApplicationLogs
 
         public async Task CreateAsync(Log logModel)
         {
-            await _ordersContext. AddAsync(logModel);
+            var res1 = await _ordersContext.AddAsync(logModel);
             await _ordersContext.SaveChangesAsync();
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace OrderService.BLL.Dtos
+﻿namespace OrderService.BLL.Models
 {
     public class OrdersGettingRequestModel 
     {

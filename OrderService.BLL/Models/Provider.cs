@@ -1,8 +1,7 @@
 ﻿namespace OrderService.BLL.Models
 {
-    public class Provider
+    public class Provider : BaseEntity
     {
-        public int Id { get; set; }
         public string? Name { get; set; }
     }
 }

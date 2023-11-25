@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OrderService.API.Dtos;
 using OrderService.API.Filters;
 using OrderService.BLL.Infrastructure;
+using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
 using OrderService.BLL.Services;
 using OrderService.DAL.Infrastructure;
@@ -22,6 +23,8 @@ builder.Services.AddTransient<IBackgroundDataHandler, BackgroundDataHandler>();
 //builder.Services.AddScoped<IRepository<Order>, PostgresEfOrdersRepository>();
 builder.Services.AddScoped<IOrdersRepository, PostgresEfOrdersRepository>();
 builder.Services.AddScoped<ILogsRepository, PostgresEfLogsRepository>();
+builder.Services.AddScoped<IRepository<Order>, PostgresEfCommonRepository<Order>>();
+builder.Services.AddScoped<IOrderItemsRepository, PostgresEfOrderItemsRepository>();
 
 var app = builder.Build();
 

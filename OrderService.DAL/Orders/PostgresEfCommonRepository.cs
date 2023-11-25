@@ -1,19 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
 using OrderService.DAL.Infrastructure;
 
 namespace OrderService.DAL.Orders
 {
-    public class PostgresEfCommonRepository<T> : IRepository<T> where T : class
+    public class PostgresEfCommonRepository<T> : IRepository<T> where T : BaseEntity
     {
         private protected readonly ApplicationContext _ordersContext;
 
         public PostgresEfCommonRepository(ApplicationContext ordersContext) => _ordersContext = ordersContext;
 
-        public async Task CreateAsync(T entity)
+        public async Task<int> CreateAsync(T entity)
         {
-            await _ordersContext.Set<T>().AddAsync(entity);
+            var savingResult = await _ordersContext.Set<T>().AddAsync(entity);
             await _ordersContext.SaveChangesAsync();
+
+            return savingResult.Entity.Id;
         }
 
         public async Task<IEnumerable<T>> GetAsync()
