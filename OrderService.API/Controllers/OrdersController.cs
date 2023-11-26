@@ -21,7 +21,7 @@ namespace OrderService.API.Controllers
             var result = _ordersService.GetForPeriod(new OrdersGettingRequestModel { DateFrom = dateFrom, DateTo = dateTo });
 
             if (result?.Count() == 0)
-                return NotFound(new ResponseDto { Status = StatusCodes.Status404NotFound, Message = "За указанный период нет заказов" });
+                return NotFound(new BaseResponseDto { Status = StatusCodes.Status404NotFound, Message = "За указанный период нет заказов" });
 
             return Ok(new ResponseDto { Message = "Заказы успешно загружены", Data = result });
         }
@@ -37,7 +37,7 @@ namespace OrderService.API.Controllers
 
             await _ordersService.CreateAsync(order, orderItems);
             
-            var responseDto = new ResponseDto { Status = StatusCodes.Status201Created, Message = "Заказ успешно сохранен" };
+            var responseDto = new BaseResponseDto { Status = StatusCodes.Status201Created, Message = "Заказ успешно сохранен" };
             return StatusCode(StatusCodes.Status201Created, responseDto);
         }
 
@@ -45,7 +45,7 @@ namespace OrderService.API.Controllers
         public async Task<IActionResult> DeleteOrderAsync(int id)
         {
             await _ordersService.DeleteAsync(id);
-            return Ok(new ResponseDto { Message = "Заказ успешно удален" });
+            return Ok(new BaseResponseDto { Message = "Заказ успешно удален" });
         }
     }
 }

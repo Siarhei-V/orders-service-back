@@ -7,17 +7,13 @@ namespace OrderService.BLL.Services.Orders
 {
     public class OrdersService : IOrdersService
     {
-        readonly IOrdersRepository _ordersRepository;
+        readonly IUoW _uow;
         readonly IBackgroundDataHandler _backgroundDataHandler;
-        readonly IRepository<Order> _ordersCommonRepository;
-        readonly IOrderItemsRepository _itemsRepository;
 
-        public OrdersService(IOrdersRepository ordersRepository, IBackgroundDataHandler backgroundDataHandler, IRepository<Order> ordersCommonRepository, IOrderItemsRepository itemsRepository)
+        public OrdersService(IBackgroundDataHandler backgroundDataHandler, IUoW uow)
         {
-            _ordersRepository = ordersRepository;
             _backgroundDataHandler = backgroundDataHandler;
-            _ordersCommonRepository = ordersCommonRepository;
-            _itemsRepository = itemsRepository;
+            _uow = uow;
         }
 
         public IEnumerable<Order> GetForPeriod(OrdersGettingRequestModel requestModel)
@@ -26,7 +22,7 @@ namespace OrderService.BLL.Services.Orders
 
             try
             {
-                orders = _ordersRepository.GetOrdersWithProvider(i => i.Date >= requestModel.DateFrom && i.Date <= requestModel.DateTo);
+                orders = _uow.OrdersRepository.GetOrdersWithProvider(i => i.Date >= requestModel.DateFrom && i.Date <= requestModel.DateTo);
             }
             catch (Exception ex)
             {
@@ -40,15 +36,19 @@ namespace OrderService.BLL.Services.Orders
         {
             try
             {
-                var createdOrderId = await _ordersCommonRepository.CreateAsync(order);
+                await _uow.BeginTransactionAsync();
+
+                var createdOrderId = await _uow.OrdersRepository.CreateAsync(order);
 
                 foreach (var item in orderItems)
                     item.OrderId = createdOrderId;
+                await _uow.OrderItemsRepository.CreateAsync(orderItems);
 
-                await _itemsRepository.CreateAsync(orderItems);
+                await _uow.CommitAsync();
             }
             catch (Exception ex)
             {
+                await _uow.RollbackAsync();
                 ex.HandleException("Не удалось сохранить заказ", () => _backgroundDataHandler.HandleLog(ex));
             }
         }
@@ -57,12 +57,12 @@ namespace OrderService.BLL.Services.Orders
         {
             try
             {
-                var deletedOrders = await _ordersCommonRepository.GetAsync(o => o.Id == id);
+                var deletedOrders = await _uow.OrdersRepository.GetAsync(o => o.Id == id);
                 var deletedOrder = deletedOrders.FirstOrDefault();
                 if (deletedOrder is null)
                     throw new CustomArgumentException("Запрашиваемого заказа не существует");
 
-                await _ordersCommonRepository.DeleteAsync(new Order { Id = id });
+                await _uow.OrdersRepository.DeleteAsycn(new Order { Id = id });
             }
             catch (Exception ex)
             {

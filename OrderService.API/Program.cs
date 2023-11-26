@@ -7,8 +7,8 @@ using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
 using OrderService.BLL.Services.OrderItems;
 using OrderService.BLL.Services.Orders;
+using OrderService.DAL.ApplicationLogs;
 using OrderService.DAL.Infrastructure;
-using OrderService.DAL.Infrastructure.ApplicationLogs;
 using OrderService.DAL.Orders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +28,7 @@ builder.Services.AddScoped<ILogsRepository, PostgresEfLogsRepository>();
 builder.Services.AddScoped<IRepository<Order>, PostgresEfCommonRepository<Order>>();
 builder.Services.AddScoped<IOrderItemsRepository, PostgresEfOrderItemsRepository>();
 builder.Services.AddScoped<IRepository<OrderItem>, PostgresEfCommonRepository<OrderItem>>();
+builder.Services.AddScoped<IUoW, UoW>();
 
 var app = builder.Build();
 
@@ -45,7 +46,7 @@ app.UseExceptionHandler(c => c.Run(async context =>
 
     backgroundHandler.HandleLog(exeption, 3);
     
-    var response = new ResponseDto { Status = StatusCodes.Status500InternalServerError, Message = "Ошибка сервера" };
+    var response = new BaseResponseDto { Status = StatusCodes.Status500InternalServerError, Message = "Ошибка сервера" };
     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
     await context.Response.WriteAsJsonAsync(response);
 }));

@@ -18,7 +18,7 @@ namespace OrderService.API.Controllers
             var items = await _orderItemsService.GetOrderItemsByOrderIdAsync(orderId);
 
             if (items?.Count() == 0)
-                return NotFound(new ResponseDto { Status = StatusCodes.Status404NotFound, Message = "Нет данных" });
+                return NotFound(new BaseResponseDto { Status = StatusCodes.Status404NotFound, Message = "Нет данных" });
 
             return Ok(new ResponseDto { Message = "Элементы заказа успешно загружены", Data = items });
         }

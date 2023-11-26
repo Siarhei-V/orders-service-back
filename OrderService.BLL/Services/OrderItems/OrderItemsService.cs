@@ -6,13 +6,13 @@ namespace OrderService.BLL.Services.OrderItems
 {
     public class OrderItemsService : IOrderItemsService
     {
+        readonly IUoW _uow;
         readonly IBackgroundDataHandler _backgroundDataHandler;
-        readonly IRepository<OrderItem> _orderItemsRepository;
 
-        public OrderItemsService(IBackgroundDataHandler backgroundDataHandler, IRepository<OrderItem> orderItemsRepository)
+        public OrderItemsService(IBackgroundDataHandler backgroundDataHandler, IUoW uow)
         {
             _backgroundDataHandler = backgroundDataHandler;
-            _orderItemsRepository = orderItemsRepository;
+            _uow = uow;
         }
 
         public async Task<IEnumerable<OrderItem>> GetOrderItemsByOrderIdAsync(int orderId)
@@ -21,7 +21,7 @@ namespace OrderService.BLL.Services.OrderItems
 
             try
             {
-                orderItems = await _orderItemsRepository.GetAsync(o => o.OrderId == orderId);
+                orderItems = await _uow.OrderItemsRepository.GetAsync(o => o.OrderId == orderId);
             }
             catch (Exception ex)
             {

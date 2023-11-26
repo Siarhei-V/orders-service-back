@@ -1,9 +1,7 @@
 ﻿namespace OrderService.API.Dtos
 {
-    internal class ResponseDto
+    internal class ResponseDto : BaseResponseDto
     {
-        public int Status { get; set; } = StatusCodes.Status200OK;
-        public string? Message { get; set; } = "Ok";
         public object? Data { get; set; }
     }
 }

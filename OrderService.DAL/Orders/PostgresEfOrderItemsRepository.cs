@@ -1,20 +1,26 @@
-﻿using OrderService.BLL.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
 using OrderService.DAL.Infrastructure;
+using System.Linq.Expressions;
 
 namespace OrderService.DAL.Orders
 {
-    // TODO: add UoW
-    public class PostgresEfOrderItemsRepository : PostgresEfCommonRepository<Order>, IOrderItemsRepository
+    public class PostgresEfOrderItemsRepository : IOrderItemsRepository
     {
-        public PostgresEfOrderItemsRepository(ApplicationContext ordersContext) : base(ordersContext)
-        {
-        }
+        readonly ApplicationContext _dbContext;
+
+        public PostgresEfOrderItemsRepository(ApplicationContext dbContext) => _dbContext = dbContext;
 
         public async Task CreateAsync(IEnumerable<OrderItem> orderItems)
         {
-            await _ordersContext.AddRangeAsync(orderItems);
-            await _ordersContext.SaveChangesAsync();
+            await _dbContext.AddRangeAsync(orderItems);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<OrderItem>> GetAsync(Expression<Func<OrderItem, bool>> predicate)
+        {
+            return await _dbContext.OrderItems.AsNoTracking().Where(predicate).ToListAsync();
         }
     }
 }

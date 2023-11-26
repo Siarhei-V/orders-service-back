@@ -1,7 +1,8 @@
 ﻿using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
+using OrderService.DAL.Infrastructure;
 
-namespace OrderService.DAL.Infrastructure.ApplicationLogs
+namespace OrderService.DAL.ApplicationLogs
 {
     public class PostgresEfLogsRepository : ILogsRepository
     {
@@ -11,7 +12,7 @@ namespace OrderService.DAL.Infrastructure.ApplicationLogs
 
         public async Task CreateAsync(Log logModel)
         {
-            var res1 = await _ordersContext.AddAsync(logModel);
+            await _ordersContext.AddAsync(logModel);
             await _ordersContext.SaveChangesAsync();
         }
     }
