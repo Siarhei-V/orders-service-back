@@ -2,6 +2,7 @@
 using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
 using OrderService.DAL.Infrastructure;
+using System.Linq.Expressions;
 
 namespace OrderService.DAL.Orders
 {
@@ -24,9 +25,9 @@ namespace OrderService.DAL.Orders
             return await _ordersContext.Set<T>().ToListAsync();
         }
 
-        public IEnumerable<T> Get(Func<T, bool> predicate)
+        public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate)
         {
-            return _ordersContext.Set<T>().AsNoTracking().Where(predicate).ToList();
+            return await _ordersContext.Set<T>().AsNoTracking().Where(predicate).ToListAsync();
         }
 
         public async Task UpdateAsync(T entity)

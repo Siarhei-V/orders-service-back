@@ -1,10 +1,9 @@
-﻿using Microsoft.VisualBasic;
-using OrderService.BLL.CustomExceptions;
+﻿using OrderService.BLL.CustomExceptions;
 using OrderService.BLL.Infrastructure;
 using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
 
-namespace OrderService.BLL.Services
+namespace OrderService.BLL.Services.Orders
 {
     public class OrdersService : IOrdersService
     {
@@ -58,7 +57,8 @@ namespace OrderService.BLL.Services
         {
             try
             {
-                var deletedOrder = _ordersCommonRepository.Get(o => o.Id == id).FirstOrDefault();
+                var deletedOrders = await _ordersCommonRepository.GetAsync(o => o.Id == id);
+                var deletedOrder = deletedOrders.FirstOrDefault();
                 if (deletedOrder is null)
                     throw new CustomArgumentException("Запрашиваемого заказа не существует");
 

@@ -1,6 +1,6 @@
 ﻿using OrderService.BLL.Models;
 
-namespace OrderService.BLL.Services
+namespace OrderService.BLL.Services.Orders
 {
     public interface IOrdersService
     {

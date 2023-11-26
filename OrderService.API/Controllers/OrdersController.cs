@@ -2,7 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OrderService.API.Dtos;
 using OrderService.BLL.Models;
-using OrderService.BLL.Services;
+using OrderService.BLL.Services.Orders;
 
 namespace OrderService.API.Controllers
 {
@@ -19,7 +19,10 @@ namespace OrderService.API.Controllers
         public IActionResult GetOrders(DateTime dateFrom, DateTime dateTo)
         {
             var result = _ordersService.GetForPeriod(new OrdersGettingRequestModel { DateFrom = dateFrom, DateTo = dateTo });
-            // TODO: hide extra fields from response
+
+            if (result?.Count() == 0)
+                return NotFound(new ResponseDto { Status = StatusCodes.Status404NotFound, Message = "За указанный период нет заказов" });
+
             return Ok(new ResponseDto { Message = "Заказы успешно загружены", Data = result });
         }
 

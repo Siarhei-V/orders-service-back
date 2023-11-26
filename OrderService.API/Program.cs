@@ -5,7 +5,8 @@ using OrderService.API.Filters;
 using OrderService.BLL.Infrastructure;
 using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
-using OrderService.BLL.Services;
+using OrderService.BLL.Services.OrderItems;
+using OrderService.BLL.Services.Orders;
 using OrderService.DAL.Infrastructure;
 using OrderService.DAL.Infrastructure.ApplicationLogs;
 using OrderService.DAL.Orders;
@@ -19,13 +20,14 @@ builder.Services.AddSwaggerGen();
 // BLL
 builder.Services.AddTransient<IOrdersService, OrdersService>();
 builder.Services.AddTransient<IBackgroundDataHandler, BackgroundDataHandler>();
+builder.Services.AddTransient<IOrderItemsService, OrderItemsService>();
 
 // DAL
-//builder.Services.AddScoped<IRepository<Order>, PostgresEfOrdersRepository>();
 builder.Services.AddScoped<IOrdersRepository, PostgresEfOrdersRepository>();
 builder.Services.AddScoped<ILogsRepository, PostgresEfLogsRepository>();
 builder.Services.AddScoped<IRepository<Order>, PostgresEfCommonRepository<Order>>();
 builder.Services.AddScoped<IOrderItemsRepository, PostgresEfOrderItemsRepository>();
+builder.Services.AddScoped<IRepository<OrderItem>, PostgresEfCommonRepository<OrderItem>>();
 
 var app = builder.Build();
 

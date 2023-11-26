@@ -1,4 +1,5 @@
 ﻿using OrderService.BLL.Models;
+using System.Linq.Expressions;
 
 namespace OrderService.BLL.Repositories
 {
@@ -6,7 +7,7 @@ namespace OrderService.BLL.Repositories
     {
         Task<int> CreateAsync(T entity);
         Task DeleteAsync(T entity);
-        IEnumerable<T> Get(Func<T, bool> predicate);
+        Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> GetAsync();
         Task UpdateAsync(T entity);
     }
