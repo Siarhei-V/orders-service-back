@@ -22,5 +22,19 @@ namespace OrderService.DAL.Orders
         {
             return await _dbContext.OrderItems.AsNoTracking().Where(predicate).ToListAsync();
         }
+
+        public async Task UpdateAsync(IEnumerable<OrderItem> orderItems)
+        {
+            foreach (var item in orderItems)
+                _dbContext.Entry(item).State = EntityState.Modified;
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsycn(IEnumerable<OrderItem> orderItems)
+        {
+            _dbContext.OrderItems.RemoveRange(orderItems);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

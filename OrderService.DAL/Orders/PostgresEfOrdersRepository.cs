@@ -31,6 +31,12 @@ namespace OrderService.DAL.Orders
             return result.Where(predicate).ToList();
         }
 
+        public async Task UpdateAsync(Order order)
+        {
+            _dbContext.Entry(order).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task DeleteAsycn(Order order)
         {
             _dbContext.Orders.Remove(order);

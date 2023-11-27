@@ -53,6 +53,46 @@ namespace OrderService.BLL.Services.Orders
             }
         }
 
+        public async Task UpdateAsync(Order order, IEnumerable<OrderItem> orderItems)
+        {
+            try
+            {
+                var editedOrders = await _uow.OrdersRepository.GetAsync(o => o.Id ==  order.Id);
+                var editedOrder = editedOrders.FirstOrDefault();
+                if (editedOrder is null)
+                    throw new CustomArgumentException("Запрашиваемого заказа не существует");
+
+                await _uow.BeginTransactionAsync();
+                await _uow.OrdersRepository.UpdateAsync(order);
+
+                var oldItemsGettingTask = _uow.OrderItemsRepository.GetAsync(o => o.OrderId == order.Id);
+
+                foreach (var item in orderItems)
+                    item.OrderId = order.Id;
+
+                var oldItems = await oldItemsGettingTask;
+
+                var itemsToRemove = oldItems.Where(o => orderItems.All(orderItem => orderItem.Id != o.Id)).ToList();
+                if (itemsToRemove.Any())
+                    await _uow.OrderItemsRepository.DeleteAsycn(itemsToRemove);
+
+                var itemsToUpdate = orderItems.Where(o => o.Id != 0).ToList();
+                if (itemsToUpdate.Any())
+                    await _uow.OrderItemsRepository.UpdateAsync(itemsToUpdate);
+
+                var itemsToCreate = orderItems.Where(o => o.Id == 0).ToList();
+                if (itemsToCreate.Any()) 
+                    await _uow.OrderItemsRepository.CreateAsync(itemsToCreate);
+
+                await _uow.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _uow.RollbackAsync();
+                ex.HandleException("Не удалось обновить заказ", () => _backgroundDataHandler.HandleLog(ex));
+            }
+        }
+
         public async Task DeleteAsync(int id)
         {
             try
