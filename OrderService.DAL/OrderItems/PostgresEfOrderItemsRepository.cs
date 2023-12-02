@@ -4,7 +4,7 @@ using OrderService.BLL.Repositories;
 using OrderService.DAL.Infrastructure;
 using System.Linq.Expressions;
 
-namespace OrderService.DAL.Orders
+namespace OrderService.DAL.OrderItems
 {
     public class PostgresEfOrderItemsRepository : IOrderItemsRepository
     {

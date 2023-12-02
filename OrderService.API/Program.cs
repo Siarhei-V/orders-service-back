@@ -7,20 +7,25 @@ using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
 using OrderService.BLL.Services.OrderItems;
 using OrderService.BLL.Services.Orders;
+using OrderService.BLL.Services.Providers;
 using OrderService.DAL.ApplicationLogs;
 using OrderService.DAL.Infrastructure;
+using OrderService.DAL.OrderItems;
 using OrderService.DAL.Orders;
+using OrderService.DAL.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers(opt => opt.Filters.Add<ExceptionsFilter>());
 builder.Services.AddDbContext<ApplicationContext>(opt => opt.UseNpgsql(builder.Configuration["PostgresConnectionString"]));
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors(setup => setup.AddPolicy("AllowAll", cfg => cfg.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 // BLL
 builder.Services.AddTransient<IOrdersService, OrdersService>();
 builder.Services.AddTransient<IBackgroundDataHandler, BackgroundDataHandler>();
 builder.Services.AddTransient<IOrderItemsService, OrderItemsService>();
+builder.Services.AddTransient<IProvidersService, ProvidersService>();
 
 // DAL
 builder.Services.AddScoped<IOrdersRepository, PostgresEfOrdersRepository>();
@@ -29,6 +34,7 @@ builder.Services.AddScoped<IRepository<Order>, PostgresEfCommonRepository<Order>
 builder.Services.AddScoped<IOrderItemsRepository, PostgresEfOrderItemsRepository>();
 builder.Services.AddScoped<IRepository<OrderItem>, PostgresEfCommonRepository<OrderItem>>();
 builder.Services.AddScoped<IUoW, UoW>();
+builder.Services.AddScoped<IProvidersRepository, PostgresEfProvidersRepository>();
 
 var app = builder.Build();
 
@@ -51,6 +57,7 @@ app.UseExceptionHandler(c => c.Run(async context =>
     await context.Response.WriteAsJsonAsync(response);
 }));
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 app.MapControllers();
 
 app.Run();
