@@ -4,6 +4,7 @@
     {
         IOrderItemsRepository OrderItemsRepository { get; }
         IOrdersRepository OrdersRepository { get; }
+        IProvidersRepository ProvidersRepository { get; }
 
         Task BeginTransactionAsync();
         Task CommitAsync();

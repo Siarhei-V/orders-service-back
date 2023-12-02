@@ -16,7 +16,7 @@ namespace OrderService.API.Controllers
         public OrdersController(IOrdersService ordersService) => _ordersService = ordersService;
 
         [HttpGet("orders")]
-        public IActionResult GetOrders(DateTime dateFrom, DateTime dateTo)
+        public IActionResult GetOrders(DateOnly dateFrom, DateOnly dateTo)
         {
             var result = _ordersService.GetForPeriod(new OrdersGettingRequestModel { DateFrom = dateFrom, DateTo = dateTo });
 
