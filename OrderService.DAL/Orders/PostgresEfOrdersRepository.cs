@@ -25,7 +25,7 @@ namespace OrderService.DAL.Orders
             return await _dbContext.Orders.AsNoTracking().Where(predicate).ToListAsync();
         }
 
-        public IEnumerable<Order> GetOrdersWithProvider(Func<Order, bool> predicate)
+        public IEnumerable<Order> GetOrdersWithProvider(Expression<Func<Order, bool>> predicate)
         {
             IQueryable<Order> result = _dbContext.Orders.Include(o => o.Provider);
             return result.Where(predicate).ToList();
