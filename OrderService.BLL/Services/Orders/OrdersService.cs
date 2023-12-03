@@ -1,4 +1,5 @@
-﻿using OrderService.BLL.CustomExceptions;
+﻿using OrderService.BLL.BL;
+using OrderService.BLL.CustomExceptions;
 using OrderService.BLL.Infrastructure;
 using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
@@ -9,11 +10,13 @@ namespace OrderService.BLL.Services.Orders
     {
         readonly IUoW _uow;
         readonly IBackgroundDataHandler _backgroundDataHandler;
+        readonly IOrderValidator _orderValidator;
 
-        public OrdersService(IBackgroundDataHandler backgroundDataHandler, IUoW uow)
+        public OrdersService(IBackgroundDataHandler backgroundDataHandler, IUoW uow, IOrderValidator orderValidator)
         {
             _backgroundDataHandler = backgroundDataHandler;
             _uow = uow;
+            _orderValidator = orderValidator;
         }
 
         public IEnumerable<Order> GetForPeriod(OrdersGettingRequestModel requestModel)
@@ -36,6 +39,8 @@ namespace OrderService.BLL.Services.Orders
         {
             try
             {
+                await _orderValidator.ValidateOrderAsync(order, orderItems);
+
                 var orderCreationTask = _uow.OrdersRepository.CreateAsync(order);
 
                 foreach (var item in orderItems)
@@ -56,6 +61,8 @@ namespace OrderService.BLL.Services.Orders
         {
             try
             {
+                await _orderValidator.ValidateOrderAsync(order, orderItems);
+
                 var editedOrders = await _uow.OrdersRepository.GetAsync(o => o.Id ==  order.Id);
                 var editedOrder = editedOrders.FirstOrDefault();
                 if (editedOrder is null)

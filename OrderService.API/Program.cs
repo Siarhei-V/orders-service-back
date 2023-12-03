@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using OrderService.API.Dtos;
 using OrderService.API.Filters;
+using OrderService.BLL.BL;
 using OrderService.BLL.Infrastructure;
 using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
@@ -29,6 +30,7 @@ builder.Services.AddTransient<IBackgroundDataHandler, BackgroundDataHandler>();
 builder.Services.AddTransient<IOrderItemsService, OrderItemsService>();
 builder.Services.AddTransient<IProvidersService, ProvidersService>();
 builder.Services.AddTransient<IFiltersService, FiltersService>();
+builder.Services.AddTransient<IOrderValidator, OrderValidator>();
 
 // DAL
 builder.Services.AddScoped<IOrdersRepository, PostgresEfOrdersRepository>();
