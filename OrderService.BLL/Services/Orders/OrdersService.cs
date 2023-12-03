@@ -22,7 +22,7 @@ namespace OrderService.BLL.Services.Orders
 
             try
             {
-                orders = _uow.OrdersRepository.GetOrdersWithProvider(i => i.Date >= requestModel.DateFrom && i.Date <= requestModel.DateTo);
+                orders = _uow.OrdersRepository.GetOrdersWithProvider(requestModel);
             }
             catch (Exception ex)
             {

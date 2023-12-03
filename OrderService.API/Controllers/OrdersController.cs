@@ -16,7 +16,7 @@ namespace OrderService.API.Controllers
         public OrdersController(IOrdersService ordersService) => _ordersService = ordersService;
 
         [HttpGet("orders")]
-        public IActionResult GetOrders(DateTime dateFrom, DateTime dateTo, string? numbersFilter, string? itemNamesFilter, string? itemUnitsFilter, string? providerNamesFilter)
+        public IActionResult GetOrders(DateTime dateFrom, DateTime dateTo, [FromQuery] string[] numbersFilter, [FromQuery] string[] itemNamesFilter, [FromQuery] string[] itemUnitsFilter, [FromQuery] string[] providerNamesFilter)
         {
             var requestDto = new OrdersGettingRequestModel
             {
@@ -27,10 +27,13 @@ namespace OrderService.API.Controllers
                 ItemUnitsFilter = itemUnitsFilter,
                 ProviderNamesFilter = providerNamesFilter
             };
-            var result = _ordersService.GetForPeriod(requestDto);
+            var ordersGettingResult = _ordersService.GetForPeriod(requestDto);
 
-            if (result?.Count() == 0)
-                return NotFound(new BaseResponseDto { Status = StatusCodes.Status404NotFound, Message = "За указанный период нет заказов" });
+            if (ordersGettingResult?.Count() == 0)
+                return NotFound(new BaseResponseDto { Status = StatusCodes.Status404NotFound, Message = "Нет заказов, удовлетворяющих заданному фильтру" });
+
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderResponseDto>()).CreateMapper();
+            var result = mapper.Map<IEnumerable<OrderResponseDto>>(ordersGettingResult);
 
             return Ok(new ResponseDto { Message = "Заказы успешно загружены", Data = result });
         }
@@ -38,7 +41,9 @@ namespace OrderService.API.Controllers
         [HttpPost("orders/order")]
         public async Task<IActionResult> CreateOrderAsync([FromBody] OrderCreationDto orderCreationDto)
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<OrderCreationDto, Order>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<OrderCreationDto, Order>()
+                .ForMember(dest => dest.OrderItems, opt => opt.Ignore())
+            ).CreateMapper();
             var order = mapper.Map<Order>(orderCreationDto);
 
             mapper = new MapperConfiguration(cfg => cfg.CreateMap<OrderItemCreationModel, OrderItem>()).CreateMapper();
@@ -53,7 +58,9 @@ namespace OrderService.API.Controllers
         [HttpPut("orders/order")]
         public async Task<IActionResult> UpdateOrderAsync([FromBody] OrderUpdateDto orderCreationDto)
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<OrderUpdateDto, Order>()).CreateMapper();
+            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<OrderUpdateDto, Order>()
+                .ForMember(dest => dest.OrderItems, opt => opt.Ignore())
+            ).CreateMapper();
             var order = mapper.Map<Order>(orderCreationDto);
 
             mapper = new MapperConfiguration(cfg => cfg.CreateMap<OrderItemUpdateModel, OrderItem>()).CreateMapper();

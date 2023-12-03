@@ -8,7 +8,7 @@ namespace OrderService.BLL.Repositories
         Task CreateAsync(Order order);
         Task DeleteAsycn(Order order);
         Task<IEnumerable<Order>> GetAsync(Expression<Func<Order, bool>> predicate);
-        IEnumerable<Order> GetOrdersWithProvider(Expression<Func<Order, bool>> predicate);
+        IEnumerable<Order> GetOrdersWithProvider(OrdersGettingRequestModel requestModel);
         Task UpdateAsync(Order order);
     }
 }
