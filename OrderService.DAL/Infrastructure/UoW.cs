@@ -6,7 +6,6 @@ using OrderService.DAL.Providers;
 
 namespace OrderService.DAL.Infrastructure
 {
-    // TODO: move SaveChangesAsync to uow
     public class UoW : IUoW
     {
         readonly ApplicationContext _dbContext;

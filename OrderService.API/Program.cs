@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Diagnostics;
+ï»¿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using OrderService.API.Dtos;
 using OrderService.API.Filters;
@@ -58,7 +58,7 @@ app.UseExceptionHandler(c => c.Run(async context =>
 
     backgroundHandler.HandleLog(exeption, 3);
     
-    var response = new BaseResponseDto { Status = StatusCodes.Status500InternalServerError, Message = "Îøèáêà ñåğâåğà" };
+    var response = new BaseResponseDto { Status = StatusCodes.Status500InternalServerError, Message = "ĞÑˆĞ¸Ğ±ĞºĞ° ÑĞµÑ€Ğ²ĞµÑ€Ğ°" };
     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
     await context.Response.WriteAsJsonAsync(response);
 }));

@@ -1,4 +1,4 @@
-using AutoMapper;
+п»їusing AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using OrderService.API.Dtos;
 using OrderService.BLL.Models;
@@ -30,12 +30,12 @@ namespace OrderService.API.Controllers
             var ordersGettingResult = _ordersService.GetForPeriod(requestDto);
 
             if (ordersGettingResult?.Count() == 0)
-                return NotFound(new BaseResponseDto { Status = StatusCodes.Status404NotFound, Message = "Нет заказов, удовлетворяющих заданному фильтру" });
+                return NotFound(new BaseResponseDto { Status = StatusCodes.Status404NotFound, Message = "РќРµС‚ Р·Р°РєР°Р·РѕРІ, СѓРґРѕРІР»РµС‚РІРѕСЂСЏСЋС‰РёС… Р·Р°РґР°РЅРЅРѕРјСѓ С„РёР»СЊС‚СЂСѓ" });
 
             var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderResponseDto>()).CreateMapper();
             var result = mapper.Map<IEnumerable<OrderResponseDto>>(ordersGettingResult);
 
-            return Ok(new ResponseDto { Message = "Заказы успешно загружены", Data = result });
+            return Ok(new ResponseDto { Message = "Р—Р°РєР°Р·С‹ СѓСЃРїРµС€РЅРѕ Р·Р°РіСЂСѓР¶РµРЅС‹", Data = result });
         }
 
         [HttpPost("orders/order")]
@@ -51,7 +51,7 @@ namespace OrderService.API.Controllers
 
             await _ordersService.CreateAsync(order, orderItems);
 
-            var responseDto = new BaseResponseDto { Status = StatusCodes.Status201Created, Message = "Заказ успешно сохранен" };
+            var responseDto = new BaseResponseDto { Status = StatusCodes.Status201Created, Message = "Р—Р°РєР°Р· СѓСЃРїРµС€РЅРѕ СЃРѕС…СЂР°РЅРµРЅ" };
             return StatusCode(StatusCodes.Status201Created, responseDto);
         }
 
@@ -68,14 +68,14 @@ namespace OrderService.API.Controllers
 
             await _ordersService.UpdateAsync(order, orderItems);
 
-            return Ok(new BaseResponseDto { Message = "Заказ успешно обновлен" });
+            return Ok(new BaseResponseDto { Message = "Р—Р°РєР°Р· СѓСЃРїРµС€РЅРѕ РѕР±РЅРѕРІР»РµРЅ" });
         }
 
         [HttpDelete("orders/order/{id}")]
         public async Task<IActionResult> DeleteOrderAsync(int id)
         {
             await _ordersService.DeleteAsync(id);
-            return Ok(new BaseResponseDto { Message = "Заказ успешно удален" });
+            return Ok(new BaseResponseDto { Message = "Р—Р°РєР°Р· СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅ" });
         }
     }
 }
