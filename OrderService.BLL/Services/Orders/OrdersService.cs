@@ -36,19 +36,18 @@ namespace OrderService.BLL.Services.Orders
         {
             try
             {
-                await _uow.BeginTransactionAsync();
-
-                var createdOrderId = await _uow.OrdersRepository.CreateAsync(order);
+                var orderCreationTask = _uow.OrdersRepository.CreateAsync(order);
 
                 foreach (var item in orderItems)
-                    item.OrderId = createdOrderId;
+                    item.Order = order;
+
+                await orderCreationTask;
                 await _uow.OrderItemsRepository.CreateAsync(orderItems);
 
-                await _uow.CommitAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                await _uow.RollbackAsync();
                 ex.HandleException("Не удалось сохранить заказ", () => _backgroundDataHandler.HandleLog(ex));
             }
         }
@@ -62,7 +61,6 @@ namespace OrderService.BLL.Services.Orders
                 if (editedOrder is null)
                     throw new CustomArgumentException("Запрашиваемого заказа не существует");
 
-                await _uow.BeginTransactionAsync();
                 await _uow.OrdersRepository.UpdateAsync(order);
 
                 var oldItemsGettingTask = _uow.OrderItemsRepository.GetAsync(o => o.OrderId == order.Id);
@@ -72,23 +70,25 @@ namespace OrderService.BLL.Services.Orders
 
                 var oldItems = await oldItemsGettingTask;
 
+                // Если из списка товаров были удалены записи, удаляем лишнее из базы
                 var itemsToRemove = oldItems.Where(o => orderItems.All(orderItem => orderItem.Id != o.Id)).ToList();
                 if (itemsToRemove.Any())
                     await _uow.OrderItemsRepository.DeleteAsycn(itemsToRemove);
 
+                // Если в новом списке и в базе равное количество товаров, обновляем записи
                 var itemsToUpdate = orderItems.Where(o => o.Id != 0).ToList();
                 if (itemsToUpdate.Any())
                     await _uow.OrderItemsRepository.UpdateAsync(itemsToUpdate);
 
+                // Если в список товаров были добавлены записи, добавляем их в базу
                 var itemsToCreate = orderItems.Where(o => o.Id == 0).ToList();
                 if (itemsToCreate.Any()) 
                     await _uow.OrderItemsRepository.CreateAsync(itemsToCreate);
 
-                await _uow.CommitAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                await _uow.RollbackAsync();
                 ex.HandleException("Не удалось обновить заказ", () => _backgroundDataHandler.HandleLog(ex));
             }
         }
@@ -103,6 +103,7 @@ namespace OrderService.BLL.Services.Orders
                     throw new CustomArgumentException("Запрашиваемого заказа не существует");
 
                 await _uow.OrdersRepository.DeleteAsycn(new Order { Id = id });
+                await _uow.SaveChangesAsync();
             }
             catch (Exception ex)
             {

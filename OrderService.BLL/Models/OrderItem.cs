@@ -5,7 +5,7 @@ namespace OrderService.BLL.Models
     public class OrderItem : BaseEntity
     {
         public int OrderId { get; set; }
-        public Order? Order { get; set; }   // TODO: delete?
+        public Order? Order { get; set; }
         public string? Name { get; set; }
 
         [Column(TypeName = "decimal(18, 3)")]

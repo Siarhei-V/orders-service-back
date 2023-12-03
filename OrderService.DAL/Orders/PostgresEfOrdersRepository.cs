@@ -12,12 +12,9 @@ namespace OrderService.DAL.Orders
 
         public PostgresEfOrdersRepository(ApplicationContext dbContext) => _dbContext = dbContext;
 
-        public async Task<int> CreateAsync(Order order)
+        public async Task CreateAsync(Order order)
         {
-            var savingResult = await _dbContext.Orders.AddAsync(order);
-            await _dbContext.SaveChangesAsync();
-
-            return savingResult.Entity.Id;
+            await _dbContext.Orders.AddAsync(order);
         }
 
         public async Task<IEnumerable<Order>> GetAsync(Expression<Func<Order, bool>> predicate)
@@ -34,13 +31,11 @@ namespace OrderService.DAL.Orders
         public async Task UpdateAsync(Order order)
         {
             _dbContext.Entry(order).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsycn(Order order)
         {
             _dbContext.Orders.Remove(order);
-            await _dbContext.SaveChangesAsync();
         }
     }
 }

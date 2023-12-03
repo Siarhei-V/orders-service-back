@@ -5,9 +5,8 @@
         IOrderItemsRepository OrderItemsRepository { get; }
         IOrdersRepository OrdersRepository { get; }
         IProvidersRepository ProvidersRepository { get; }
+        IFiltersRepository FiltersRepository { get; }
 
-        Task BeginTransactionAsync();
-        Task CommitAsync();
-        Task RollbackAsync();
+        Task SaveChangesAsync();
     }
 }

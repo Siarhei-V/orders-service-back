@@ -5,7 +5,7 @@ namespace OrderService.BLL.Repositories
 {
     public interface IOrdersRepository
     {
-        Task<int> CreateAsync(Order order);
+        Task CreateAsync(Order order);
         Task DeleteAsycn(Order order);
         Task<IEnumerable<Order>> GetAsync(Expression<Func<Order, bool>> predicate);
         IEnumerable<Order> GetOrdersWithProvider(Expression<Func<Order, bool>> predicate);

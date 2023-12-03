@@ -15,7 +15,6 @@ namespace OrderService.DAL.OrderItems
         public async Task CreateAsync(IEnumerable<OrderItem> orderItems)
         {
             await _dbContext.AddRangeAsync(orderItems);
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<OrderItem>> GetAsync(Expression<Func<OrderItem, bool>> predicate)
@@ -27,14 +26,11 @@ namespace OrderService.DAL.OrderItems
         {
             foreach (var item in orderItems)
                 _dbContext.Entry(item).State = EntityState.Modified;
-
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task DeleteAsycn(IEnumerable<OrderItem> orderItems)
         {
             _dbContext.OrderItems.RemoveRange(orderItems);
-            await _dbContext.SaveChangesAsync();
         }
     }
 }

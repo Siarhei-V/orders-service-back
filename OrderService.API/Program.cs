@@ -5,10 +5,12 @@ using OrderService.API.Filters;
 using OrderService.BLL.Infrastructure;
 using OrderService.BLL.Models;
 using OrderService.BLL.Repositories;
+using OrderService.BLL.Services.Filters;
 using OrderService.BLL.Services.OrderItems;
 using OrderService.BLL.Services.Orders;
 using OrderService.BLL.Services.Providers;
 using OrderService.DAL.ApplicationLogs;
+using OrderService.DAL.Filters;
 using OrderService.DAL.Infrastructure;
 using OrderService.DAL.OrderItems;
 using OrderService.DAL.Orders;
@@ -26,6 +28,7 @@ builder.Services.AddTransient<IOrdersService, OrdersService>();
 builder.Services.AddTransient<IBackgroundDataHandler, BackgroundDataHandler>();
 builder.Services.AddTransient<IOrderItemsService, OrderItemsService>();
 builder.Services.AddTransient<IProvidersService, ProvidersService>();
+builder.Services.AddTransient<IFiltersService, FiltersService>();
 
 // DAL
 builder.Services.AddScoped<IOrdersRepository, PostgresEfOrdersRepository>();
@@ -35,6 +38,7 @@ builder.Services.AddScoped<IOrderItemsRepository, PostgresEfOrderItemsRepository
 builder.Services.AddScoped<IRepository<OrderItem>, PostgresEfCommonRepository<OrderItem>>();
 builder.Services.AddScoped<IUoW, UoW>();
 builder.Services.AddScoped<IProvidersRepository, PostgresEfProvidersRepository>();
+builder.Services.AddScoped<IFiltersRepository, PostgresEfFiltersRepository>();
 
 var app = builder.Build();
 

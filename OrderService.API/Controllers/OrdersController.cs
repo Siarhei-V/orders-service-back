@@ -16,9 +16,18 @@ namespace OrderService.API.Controllers
         public OrdersController(IOrdersService ordersService) => _ordersService = ordersService;
 
         [HttpGet("orders")]
-        public IActionResult GetOrders(DateTime dateFrom, DateTime dateTo)
+        public IActionResult GetOrders(DateTime dateFrom, DateTime dateTo, string? numbersFilter, string? itemNamesFilter, string? itemUnitsFilter, string? providerNamesFilter)
         {
-            var result = _ordersService.GetForPeriod(new OrdersGettingRequestModel { DateFrom = dateFrom, DateTo = dateTo });
+            var requestDto = new OrdersGettingRequestModel
+            {
+                DateFrom = dateFrom,
+                DateTo = dateTo,
+                NumbersFilter = numbersFilter,
+                ItemNamesFilter = itemNamesFilter,
+                ItemUnitsFilter = itemUnitsFilter,
+                ProviderNamesFilter = providerNamesFilter
+            };
+            var result = _ordersService.GetForPeriod(requestDto);
 
             if (result?.Count() == 0)
                 return NotFound(new BaseResponseDto { Status = StatusCodes.Status404NotFound, Message = "За указанный период нет заказов" });
