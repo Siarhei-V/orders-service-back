@@ -16,7 +16,7 @@ namespace OrderService.BLL.BL
                 throw new CustomArgumentException("Имя заказа и номер заказа не могут совпадать");
 
             var existedOrder = await _uow.OrdersRepository.GetAsync(o => o.Number == order.Number && o.ProviderId == order.ProviderId);
-            if (existedOrder.Any())
+            if (existedOrder.Any() && order.Id != existedOrder.First().Id)
                 throw new CustomArgumentException("Заказ с такими номером и поставщиком уже существует");
         }
     }
